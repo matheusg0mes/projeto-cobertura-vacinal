@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cobertura Vacinal no Brasil — Projeto G1</title>
+<meta name="description" content="Análise e dashboard interativo da cobertura vacinal no Brasil (2015–2024) com Python, Pandas, Matplotlib, Seaborn e Streamlit.">
+<style>
+  :root {
+    --ink: #14213d;
+    --muted: #4b5873;
+    --line: #d9dfeb;
+    --bg: #fbfcfe;
+    --panel: #ffffff;
+    --accent: #0f5c8a;
+    --ok: #2e8b57;
+    --warn: #e6a23c;
+    --crit: #c0392b;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ink: #e8edf7; --muted: #aab4c9; --line: #2b3550; --bg: #0e1424; --panel: #151d33; --accent: #6db7e8;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 17px/1.65 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  a { color: var(--accent); }
+  a:focus-visible, .btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 22px; }
+  h1, h2, h3 { font-family: Georgia, "Times New Roman", serif; line-height: 1.2; margin: 0 0 .5em; }
+  h1 { font-size: clamp(2rem, 5vw, 3.2rem); letter-spacing: -.01em; }
+  h2 { font-size: 1.7rem; margin-top: 0; }
+  h3 { font-size: 1.1rem; }
+  p { margin: 0 0 1em; max-width: 70ch; }
+
+  header.hero { padding: 64px 0 40px; border-bottom: 1px solid var(--line); }
+  .hero p.lead { font-size: 1.2rem; color: var(--muted); }
+  .stack { display: flex; height: 18px; border-radius: 9px; overflow: hidden; margin: 28px 0 8px; max-width: 640px; }
+  .stack span { display: block; height: 100%; }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 22px; font-size: .92rem; color: var(--muted); }
+  .legend i { display: inline-block; width: 11px; height: 11px; border-radius: 3px; margin-right: 7px; vertical-align: -1px; }
+
+  section { padding: 48px 0; border-bottom: 1px solid var(--line); }
+  section:last-of-type { border-bottom: 0; }
+
+  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; margin-top: 18px; }
+  .kpi { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; }
+  .kpi b { display: block; font: 700 1.75rem/1.15 Georgia, serif; }
+  .kpi small { color: var(--muted); display: block; margin-top: 4px; line-height: 1.4; }
+
+  ul.q { padding-left: 1.2em; max-width: 70ch; }
+  ul.q li { margin-bottom: .35em; }
+
+  .finds { display: grid; gap: 14px; }
+  .find { border-left: 4px solid var(--accent); padding: 4px 0 4px 16px; max-width: 74ch; }
+  .find.crit { border-color: var(--crit); }
+
+  .gal { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px; margin-top: 18px; }
+  figure { margin: 0; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px; }
+  figure img { width: 100%; height: auto; display: block; border-radius: 6px; background: #fff; }
+  figcaption { font-size: .9rem; color: var(--muted); margin-top: 8px; line-height: 1.45; }
+  .wide { grid-column: 1 / -1; }
+
+  .tags { display: flex; flex-wrap: wrap; gap: 8px; padding: 0; list-style: none; }
+  .tags li { border: 1px solid var(--line); background: var(--panel); border-radius: 999px; padding: 4px 14px; font-size: .95rem; }
+
+  .btns { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
+  .btn { display: inline-block; padding: 10px 18px; border-radius: 8px; border: 1px solid var(--accent); text-decoration: none; font-weight: 600; }
+  .btn.primary { background: var(--accent); color: #fff; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .btn.primary { color: #0e1424; } }
+
+  footer { padding: 30px 0 50px; color: var(--muted); font-size: .92rem; }
+  .note { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 18px; max-width: 74ch; }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <h1>Cobertura Vacinal no Brasil, 2015–2024</h1>
+    <p class="lead">Análise e dashboard interativo para encontrar onde a imunização fica abaixo da meta. Projeto de análise e visualização de dados com Python, Pandas, Matplotlib, Seaborn e Streamlit.</p>
+    <div class="stack" role="img" aria-label="Distribuição dos registros: 34,8% adequado, 43,6% atenção, 21,6% crítico">
+      <span style="width:34.75%;background:var(--ok)"></span>
+      <span style="width:43.61%;background:var(--warn)"></span>
+      <span style="width:21.64%;background:var(--crit)"></span>
+    </div>
+    <div class="legend">
+      <span><i style="background:var(--ok)"></i>Adequado: 34,8% dos registros</span>
+      <span><i style="background:var(--warn)"></i>Atenção: 43,6%</span>
+      <span><i style="background:var(--crit)"></i>Crítico: 21,6%</span>
+    </div>
+  </div>
+</header>
+
+<main>
+<section>
+  <div class="wrap">
+    <h2>Sobre o projeto</h2>
+    <p>O projeto investiga a cobertura de seis vacinas (Poliomielite, BCG, Influenza, Hepatite B, COVID-19 e Tríplice Viral) em 20 estados e 37 municípios, de 2015 a 2024, comparando cada registro com a meta de imunização (80% ou 95%).</p>
+    <p>Ele percorre o fluxo completo de um projeto analítico: tratamento dos dados, análise exploratória, indicadores, visualizações, persistência em banco SQLite, dashboard interativo e publicação na web.</p>
+    <p class="note"><strong>Base simulada.</strong> Os dados foram fornecidos pelo professor para fins didáticos. Os resultados ilustram o método e não descrevem a situação real da vacinação no país.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Perguntas orientadoras</h2>
+    <ul class="q">
+      <li>Quais estados têm a menor cobertura vacinal?</li>
+      <li>Houve queda da vacinação ao longo do tempo? Em quais períodos?</li>
+      <li>Quais vacinas têm menor adesão e quais estão abaixo da meta?</li>
+      <li>Existem regiões mais vulneráveis?</li>
+      <li>Quais estados exigem maior atenção da saúde pública?</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Indicadores analisados</h2>
+    <div class="kpis">
+      <div class="kpi"><b>84,0%</b><small>Cobertura vacinal média (nacional)</small></div>
+      <div class="kpi"><b>65,2%</b><small>Registros abaixo da meta</small></div>
+      <div class="kpi"><b>21,6%</b><small>Registros em nível crítico (15 p.p. ou mais abaixo da meta)</small></div>
+      <div class="kpi"><b>950,99 mi</b><small>Doses aplicadas no período</small></div>
+      <div class="kpi"><b>Poliomielite</b><small>Vacina com menor cobertura média (83,4%)</small></div>
+      <div class="kpi"><b>MS</b><small>Estado com menor cobertura média (82,2%)</small></div>
+      <div class="kpi"><b>Sudeste</b><small>Região mais vulnerável (83,7%)</small></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Principais achados</h2>
+    <div class="finds">
+      <div class="find crit"><strong>O gargalo está nas metas de 95%.</strong> Com meta de 95%, 85,7% dos registros ficam abaixo dela e 33,8% são críticos. Com meta de 80%, são 33,5% e 2,8%. A cobertura média é a mesma nos dois grupos (cerca de 84%): o que muda é a exigência.</div>
+      <div class="find"><strong>Sem queda sustentada no tempo.</strong> A média anual oscila entre 83,2% (2020) e 85,3% (2023). A maior queda de um ano para o outro foi em 2024 (−1,6 p.p.).</div>
+      <div class="find"><strong>Estados que pedem atenção:</strong> MS, MA e AM têm a maior fatia de registros críticos (30,0%, 27,5% e 26,7%).</div>
+      <div class="find"><strong>Campanhas não explicam a cobertura.</strong> A correlação entre número de campanhas e cobertura é praticamente zero (r = −0,005).</div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Visualizações</h2>
+    <div class="gal">
+      <figure class="wide"><img src="imagens/01_evolucao_temporal.png" alt="Linha da cobertura vacinal mensal e média móvel de 12 meses, 2015 a 2024" loading="lazy"><figcaption>Evolução da cobertura mensal e média móvel de 12 meses: oscilação em torno de 84%, sem tendência.</figcaption></figure>
+      <figure><img src="imagens/02_cobertura_por_estado.png" alt="Barras horizontais da cobertura média por estado" loading="lazy"><figcaption>Cobertura média por estado. MS e RO têm as menores médias.</figcaption></figure>
+      <figure><img src="imagens/03_vacinas_regioes.png" alt="Barras do ranking de vacinas e da cobertura por região" loading="lazy"><figcaption>Ranking de vacinas e comparação regional.</figcaption></figure>
+      <figure><img src="imagens/04_heatmap_mensal.png" alt="Heatmap da cobertura média por ano e mês" loading="lazy"><figcaption>Heatmap mensal: cobertura por ano e mês.</figcaption></figure>
+      <figure><img src="imagens/05_dispersao_meta_cobertura.png" alt="Dispersão de meta contra cobertura colorida por nível de alerta" loading="lazy"><figcaption>Dispersão meta × cobertura, colorida pelo nível de alerta.</figcaption></figure>
+      <figure><img src="imagens/06_alertas_por_estado.png" alt="Barras empilhadas dos níveis de alerta por estado" loading="lazy"><figcaption>Composição dos níveis de alerta por estado.</figcaption></figure>
+      <figure><img src="imagens/07_correlacao.png" alt="Matriz de correlação entre as variáveis numéricas" loading="lazy"><figcaption>Correlação de Pearson entre as variáveis numéricas.</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Tecnologias utilizadas</h2>
+    <ul class="tags">
+      <li>Python</li><li>Pandas</li><li>NumPy</li><li>Matplotlib</li><li>Seaborn</li><li>Streamlit</li>
+      <li>Plotly</li><li>SQLAlchemy</li><li>SQLite</li><li>GitHub</li><li>GitHub Pages</li>
+    </ul>
+    <p>Funcionalidades avançadas: persistência em banco (SQLAlchemy + SQLite, com modelagem relacional e <code>JOIN</code>), correlação estatística, séries temporais (média móvel e variação anual) e mapa interativo.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Arquivos do projeto</h2>
+    <div class="btns">
+      <a class="btn" href="README.md">Ver README</a>
+      <a class="btn" href="notebooks/analise_cobertura_vacinal.ipynb">Ver notebook</a>
+      <a class="btn" href="dados/simulacao_cobertura_vacinal_brasil.csv">Baixar base de dados</a>
+      <a class="btn" href="app.py">Ver código do dashboard</a>
+      <!-- TROQUE SEU_USUARIO pelo seu usuário do GitHub -->
+      <a class="btn" href="https://github.com/SEU_USUARIO/projeto-cobertura-vacinal">Repositório no GitHub</a>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Dashboard interativo</h2>
+    <p>O dashboard foi feito com Streamlit e permite explorar os dados com sete filtros (ano, mês, região, estado, vacina, público-alvo e nível de alerta), KPIs dinâmicos, gráficos, tabela dinâmica e conclusão executiva que se atualiza com os filtros.</p>
+    <!-- TROQUE o link abaixo pelo endereço do seu app no Streamlit Community Cloud -->
+    <div class="btns"><a class="btn primary" href="https://SEU-APP.streamlit.app/">Acessar o dashboard no Streamlit</a></div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">Projeto desenvolvido para fins educacionais — Análise e Visualização de Dados com Python.</div>
+</footer>
+
+</body>
+</html>
