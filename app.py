@@ -142,7 +142,8 @@ def forca_corr(r: float) -> str:
 # ----------------------------------------------------------------------------
 st.title("💉 Cobertura Vacinal no Brasil (2015–2024)")
 st.markdown(
-    """
+    """ Projeto G1- LINGUAGEM DE PROGRAMAÇÃO, PROFESSOR Alexandre Neves Louzada, ALUNO MATHEUS GOMES DA COSTA
+     
 **O problema.** A queda da cobertura vacinal aumenta o risco de surtos de doenças já controladas.
 Este painel monitora a cobertura de seis vacinas em 20 estados e 37 municípios, compara cada
 registro com a meta de imunização (80% ou 95%) e aponta onde a atenção da saúde pública deve se concentrar.
