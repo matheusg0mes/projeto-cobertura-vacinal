@@ -12,7 +12,7 @@ Analisa a cobertura de seis vacinas em 20 estados e 37 municípios, compara com 
 |---|---|
 | Repositório GitHub | https://github.com/matheusg0mes/projeto-cobertura-vacinal |
 | Página (GitHub Pages) | https://matheusg0mes.github.io/projeto-cobertura-vacinal/ |
-| Dashboard (Streamlit) | [https://SEU-APP.streamlit.app/](https://projeto-cobertura-vacinal.streamlit.app/) |
+| Dashboard (Streamlit) | https://projeto-cobertura-vacinal.streamlit.app |
 
 ## Estrutura
 
