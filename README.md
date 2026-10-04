@@ -1,6 +1,7 @@
 # Cobertura Vacinal no Brasil (2015–2024)
 
-Projeto G1/G2 — Análise e Visualização de Dados com Python.
+Projeto G1/G2 LINGUAGEM DE PROGRAMAÇÃO, PROFESSOR Alexandre Neves Louzada, ALUNO MATHEUS GOMES DA COSTA.
+
 Analisa a cobertura de seis vacinas em 20 estados e 37 municípios, compara com as metas de imunização (80% e 95%) e apresenta os resultados em um dashboard interativo.
 
 > A base (`dados/simulacao_cobertura_vacinal_brasil.csv`) é **simulada** e foi fornecida pelo professor. Os resultados ilustram o método e não descrevem a situação real do país.
@@ -9,9 +10,9 @@ Analisa a cobertura de seis vacinas em 20 estados e 37 municípios, compara com 
 
 | Entrega | Link |
 |---|---|
-| Repositório GitHub | https://github.com/SEU_USUARIO/projeto-cobertura-vacinal |
-| Página (GitHub Pages) | https://SEU_USUARIO.github.io/projeto-cobertura-vacinal/ |
-| Dashboard (Streamlit) | https://SEU-APP.streamlit.app/ |
+| Repositório GitHub | https://github.com/matheusg0mes/projeto-cobertura-vacinal |
+| Página (GitHub Pages) | https://matheusg0mes.github.io/projeto-cobertura-vacinal/ |
+| Dashboard (Streamlit) | [https://SEU-APP.streamlit.app/](https://projeto-cobertura-vacinal.streamlit.app/) |
 
 ## Estrutura
 
